@@ -57,7 +57,7 @@ PAGE = r"""<!DOCTYPE html>
 body { background: #080c08; color: #00ff41; font-family: 'Share Tech Mono', 'Courier New', monospace; font-size: 14px; }
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-.grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; gap: 1px; height: 100vh; background: #1a2e1a; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr 260px; gap: 1px; height: 100vh; background: #1a2e1a; }
 .panel { background: #080c08; padding: 16px; overflow: hidden; display: flex; flex-direction: column; }
 .header { grid-column: 1 / -1; border-bottom: 1px solid #00ff41; padding: 12px 16px; display: flex; align-items: center; gap: 24px; }
 .logo { font-size: 18px; letter-spacing: 2px; }
