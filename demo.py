@@ -176,22 +176,32 @@ function setRunning(v) {
 async function runSingle() {
   if (running) return;
   setRunning(true);
-  const res = await fetch('/run/match', { method: 'POST' });
-  const data = await res.json();
-  updateBoard(data.standings);
-  updateReplay(data.hands);
-  setRunning(false);
+  try {
+    const res = await fetch('/run/match', { method: 'POST' });
+    const data = await res.json();
+    updateBoard(data.standings);
+    updateReplay(data.hands);
+  } catch (err) {
+    addLog('match failed: ' + (err && err.message ? err.message : err), 'err');
+  } finally {
+    setRunning(false);
+  }
 }
 
 async function runTournament() {
   if (running) return;
   setRunning(true);
-  const res = await fetch('/run/tournament', { method: 'POST' });
-  const data = await res.json();
-  updateBoard(data.standings);
-  document.getElementById('round-label').textContent =
-    `Round ${data.round} complete — ${data.finalists} finalists selected`;
-  setRunning(false);
+  try {
+    const res = await fetch('/run/tournament', { method: 'POST' });
+    const data = await res.json();
+    updateBoard(data.standings);
+    document.getElementById('round-label').textContent =
+      `Round ${data.round} complete — ${data.finalists} finalists selected`;
+  } catch (err) {
+    addLog('tournament failed: ' + (err && err.message ? err.message : err), 'err');
+  } finally {
+    setRunning(false);
+  }
 }
 
 function updateBoard(standings) {
