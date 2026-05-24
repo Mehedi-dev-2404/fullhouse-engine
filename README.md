@@ -132,6 +132,20 @@ def decide(state):
 
 ---
 
+## Submitting your bot
+
+Once your bot validates cleanly locally (`make validate BOT=bots/mybot/bot.py`), upload it at **[portal.fullhousehackathon.com](https://portal.fullhousehackathon.com)**.
+
+**Deadline:** **31 May 2026, 23:59 UTC.** Late submissions don't enter the qualifier.
+
+The portal runs `sandbox/validator.py` against your upload and rejects anything that fails — so a green local validation is the bar to clear. Submit either a single `bot.py` or a `.zip` archive with `bot.py` at the root plus an optional `data/` directory (see [Submission formats](#submission-formats) above for limits).
+
+If validation passes, your bot is queued for the **1 June qualifier**. You can re-upload up to the deadline; only your most recent successful submission counts.
+
+**Patch window:** between Day 1 (qualifier) and Day 5 (finals), you can replace your bot with an updated version once. Same submission flow; your bot ID stays the same across all rounds.
+
+---
+
 ## Running matches
 
 ```bash
