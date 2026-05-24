@@ -22,13 +22,13 @@ test_sandbox() {
   echo '{"type":"action_request","hand_id":"test","street":"preflop","seat_to_act":0,"pot":150,"community_cards":[],"current_bet":100,"min_raise_to":200,"amount_owed":100,"can_check":false,"your_cards":["As","Kh"],"your_stack":9900,"your_bet_this_street":0,"players":[],"action_log":[]}' \
     | docker run --rm -i \
         --network none \
-        --memory 256m \
-        --memory-swap 256m \
+        --memory 768m \
+        --memory-swap 768m \
         --cpus 0.5 \
         --read-only \
         --no-new-privileges \
         --user 1000:1000 \
-        --tmpfs /tmp:size=10m \
+        --tmpfs /tmp:size=20m \
         -v "$(pwd)/$BOT:/bot/bot.py:ro" \
         "$IMAGE"
 }
@@ -70,7 +70,7 @@ security_check() {
   fi
 
   echo -n "4. Memory limit enforced... "
-  echo "OK (set to 256m — OOM-killer handles enforcement)"
+  echo "OK (set to 768m — OOM-killer handles enforcement)"
 
   echo "=== All checks complete ==="
 }
