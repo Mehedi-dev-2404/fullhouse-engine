@@ -75,7 +75,7 @@ create table public.tournaments (
   phase         tournament_phase not null default 'registration',
   current_round int  not null default 0,
   total_rounds  int  not null default 3,   -- swiss rounds before finale
-  n_finalists   int  not null default 32,
+  n_finalists   int  not null default 64,
   starts_at     timestamptz not null,
   created_at    timestamptz not null default now()
 );
@@ -92,7 +92,7 @@ create table public.matches (
   round         int  not null,
   table_index   int  not null,
   status        match_status not null default 'queued',
-  n_hands       int  not null default 200,
+  n_hands       int  not null default 400,
   started_at    timestamptz,
   completed_at  timestamptz,
   error_message text,
