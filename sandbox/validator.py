@@ -45,12 +45,20 @@ MAX_BOT_PY_SIZE_BYTES  =   5 * 1024 * 1024   # 5 MB for the .py file
 # Dangerous os calls (os.system, os.popen, os.exec*) are caught by the call-
 # pattern check below. Network/filesystem are also blocked at container level
 # (--network none, --read-only).
+#
+# Concurrency policy: bots are single-threaded with a 2-second wall-clock
+# budget per decision. `threading`, `multiprocessing`, `asyncio`, and any
+# other concurrency primitives are forbidden — importing one is a hard
+# failure at validate time, not a warning. Do not attempt to spawn threads,
+# processes, or event loops to keep work running past the per-decision
+# deadline; the timer cancels decide() mid-call and any background work
+# counts as fraud.
 FORBIDDEN_MODULES = {
     "socket", "urllib", "urllib2", "urllib3", "requests", "httpx", "aiohttp",
     "http", "ftplib", "smtplib", "telnetlib", "xmlrpc",
     "subprocess", "multiprocessing",
     "pickle", "shelve",
-    "threading",                     # allow for complex strategies but flag
+    "threading", "asyncio",
     "ctypes",                        # FFI, can call libc
     "runpy", "importlib",            # dynamic imports
 }
