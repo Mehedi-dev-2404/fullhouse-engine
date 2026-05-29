@@ -9,3 +9,75 @@ Max info sets: 2,880  (8 tiers × 6 textures × 4 streets × 5 pot-odds × 3 pos
   iter 150,000 | info sets: 1,241 | 1,572 iter/s | elapsed: 95.4s
   iter 200,000 | info sets: 1,244 | 1,506 iter/s | elapsed: 132.8s
   [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_200000.npz]
+  iter 250,000 | info sets: 1,247 | 1,469 iter/s | elapsed: 170.1s
+  iter 300,000 | info sets: 1,247 | 1,464 iter/s | elapsed: 204.9s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_300000.npz]
+  iter 350,000 | info sets: 1,247 | 1,468 iter/s | elapsed: 238.5s
+  iter 400,000 | info sets: 1,247 | 1,468 iter/s | elapsed: 272.5s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_400000.npz]
+  iter 450,000 | info sets: 1,248 | 1,459 iter/s | elapsed: 308.5s
+  iter 500,000 | info sets: 1,248 | 1,449 iter/s | elapsed: 345.0s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_500000.npz]
+  iter 550,000 | info sets: 1,248 | 1,447 iter/s | elapsed: 380.0s
+  iter 600,000 | info sets: 1,248 | 1,457 iter/s | elapsed: 411.8s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_600000.npz]
+  iter 650,000 | info sets: 1,248 | 1,438 iter/s | elapsed: 452.0s
+  iter 700,000 | info sets: 1,248 | 1,425 iter/s | elapsed: 491.4s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_700000.npz]
+  iter 750,000 | info sets: 1,248 | 1,413 iter/s | elapsed: 530.7s
+  iter 800,000 | info sets: 1,248 | 1,382 iter/s | elapsed: 578.8s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_800000.npz]
+  iter 850,000 | info sets: 1,248 | 1,371 iter/s | elapsed: 619.9s
+  iter 900,000 | info sets: 1,248 | 1,355 iter/s | elapsed: 664.2s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_900000.npz]
+  iter 950,000 | info sets: 1,248 | 1,323 iter/s | elapsed: 718.3s
+  iter 1,000,000 | info sets: 1,248 | 1,309 iter/s | elapsed: 764.1s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1000000.npz]
+  iter 1,050,000 | info sets: 1,248 | 1,303 iter/s | elapsed: 805.5s
+  iter 1,100,000 | info sets: 1,248 | 1,300 iter/s | elapsed: 845.9s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1100000.npz]
+  iter 1,150,000 | info sets: 1,248 | 1,297 iter/s | elapsed: 886.4s
+  iter 1,200,000 | info sets: 1,248 | 1,296 iter/s | elapsed: 926.1s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1200000.npz]
+  iter 1,250,000 | info sets: 1,248 | 1,291 iter/s | elapsed: 968.1s
+  iter 1,300,000 | info sets: 1,248 | 1,282 iter/s | elapsed: 1013.8s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1300000.npz]
+  iter 1,350,000 | info sets: 1,248 | 1,276 iter/s | elapsed: 1058.3s
+  iter 1,400,000 | info sets: 1,248 | 1,278 iter/s | elapsed: 1095.5s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1400000.npz]
+  iter 1,450,000 | info sets: 1,248 | 1,281 iter/s | elapsed: 1131.8s
+  iter 1,500,000 | info sets: 1,248 | 1,283 iter/s | elapsed: 1169.0s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1500000.npz]
+  iter 1,550,000 | info sets: 1,248 | 1,290 iter/s | elapsed: 1201.6s
+  iter 1,600,000 | info sets: 1,248 | 1,295 iter/s | elapsed: 1235.2s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1600000.npz]
+  iter 1,650,000 | info sets: 1,248 | 1,300 iter/s | elapsed: 1269.2s
+  iter 1,700,000 | info sets: 1,248 | 1,305 iter/s | elapsed: 1302.4s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1700000.npz]
+  iter 1,750,000 | info sets: 1,248 | 1,313 iter/s | elapsed: 1332.4s
+  iter 1,800,000 | info sets: 1,248 | 1,321 iter/s | elapsed: 1362.7s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1800000.npz]
+  iter 1,850,000 | info sets: 1,248 | 1,329 iter/s | elapsed: 1392.3s
+  iter 1,900,000 | info sets: 1,248 | 1,334 iter/s | elapsed: 1424.5s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_1900000.npz]
+  iter 1,950,000 | info sets: 1,248 | 1,341 iter/s | elapsed: 1454.4s
+  iter 2,000,000 | info sets: 1,248 | 1,347 iter/s | elapsed: 1484.4s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_2000000.npz]
+
+Done. 2,000,000 iters in 1484.5s (1,347 iter/s)
+
+Blueprint saved → /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint.npz
+  Size:       559.1 KB
+  Info sets:  1248
+  Iterations: 2,000,000
+  Timestamp:  2026-05-29 14:44:27.443792
+
+Sample average strategies  [fold | call | raise_sm | raise_lg | all_in]:
+  premium preflop late, small odds
+    key=(8, 0, 0, 1, 2)  → [0.2 0.2 0.2 0.2 0.2]
+  trash preflop early, big odds
+    key=(1, 0, 0, 3, 0)  → [0.003 0.003 0.332 0.332 0.332]
+  good hand dry-high flop, med odds, late
+    key=(6, 2, 1, 2, 2)  → [0.    0.98  0.006 0.007 0.007]
+  marginal wet-high river, huge odds, early
+    key=(3, 4, 3, 4, 0)  → [0.2 0.2 0.2 0.2 0.2]

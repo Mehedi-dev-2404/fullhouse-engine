@@ -147,6 +147,38 @@ def cfr_lookup(game_state) -> dict | None:
     if BLUEPRINT is None:
         return None
     try:
+        # CFR plays GTO (balanced), which is unexploitable but not maximally
+        # exploitative. For opponent types where heuristics clearly outperform
+        # GTO, skip the blueprint entirely and fall back to heuristics.
+        my_seat = game_state.get("seat_to_act")
+        for p in game_state.get("players", []):
+            if p["state"] in ("folded", "busted") or p["seat"] == my_seat:
+                continue
+            bid        = p.get("bot_id", "")
+            opp_type   = classify_opponent(bid)
+            stats      = OPPONENT_STATS.get(bid, {})
+            total      = stats.get("total_actions", 0)
+            agg        = stats.get("aggressive_actions", 0)
+            hands      = stats.get("hands", 0)
+            vpip       = stats.get("vpip", 0)
+            pfr        = stats.get("pfr", 0)
+            cbet_faced  = stats.get("cbet_faced", 0)
+            cbet_folded = stats.get("cbet_folded", 0)
+
+            # Maniac / high-aggression: heuristic calls down correctly
+            if opp_type == "maniac":
+                return None
+            if total > 0 and agg / total > 0.6:
+                return None
+
+            # Passive folder: heuristic exploits with constant pressure
+            if opp_type == "calling_station":
+                return None
+            if hands >= 5 and vpip / hands > 0.4 and pfr / hands < 0.1:
+                return None
+            if cbet_faced > 5 and cbet_folded / cbet_faced > 0.7:
+                return None
+
         street_str  = game_state["street"]
         street_int  = _STREET_INT.get(street_str, 0)
         amount_owed = game_state["amount_owed"]
