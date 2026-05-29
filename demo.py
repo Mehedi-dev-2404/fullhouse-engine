@@ -22,11 +22,11 @@ app = Flask(__name__)
 
 BOT_PATHS = {
     "Koda":             "bots/mybot/bot.py",
+    "The Shark":        "bots/shark/bot.py",
     "The Aggressor":    "bots/aggressor/bot.py",
     "The Mathematician":"bots/mathematician/bot.py",
-    "The Shark":        "bots/shark/bot.py",
-    "Template Bot A":   "bots/template/bot.py",
     "Pot-Odds Bot B":   "bots/ref_bot_2/bot.py",
+    "Template Bot":     "bots/template/bot.py",
 }
 
 state = {
