@@ -165,10 +165,12 @@ def cfr_lookup(game_state) -> dict | None:
             cbet_faced  = stats.get("cbet_faced", 0)
             cbet_folded = stats.get("cbet_folded", 0)
 
-            # Maniac / high-aggression: heuristic calls down correctly
-            if opp_type == "maniac":
+            # Maniac / high-aggression: heuristic calls down correctly.
+            # Use tentative detection so we bail out within the first 2-3 hands,
+            # not just after 5 (critical in 6-player where Aggressor fires early).
+            if opp_type == "maniac" or _is_tentative_maniac(bid):
                 return None
-            if total > 0 and agg / total > 0.6:
+            if total > 0 and agg / total > 0.5:
                 return None
 
             # Passive folder: heuristic exploits with constant pressure
@@ -178,6 +180,17 @@ def cfr_lookup(game_state) -> dict | None:
                 return None
             if cbet_faced > 5 and cbet_folded / cbet_faced > 0.7:
                 return None
+
+        # In multi-player, if more than one opponent is still "unknown"
+        # we don't have enough data to rely on GTO — use heuristics instead.
+        unknown_count = sum(
+            1 for p in game_state.get("players", [])
+            if p["state"] not in ("folded", "busted")
+            and p["seat"] != my_seat
+            and classify_opponent(p.get("bot_id", "")) == "unknown"
+        )
+        if unknown_count > 1:
+            return None
 
         street_str  = game_state["street"]
         street_int  = _STREET_INT.get(street_str, 0)
@@ -677,20 +690,41 @@ def classify_opponent(bot_id):
     if hands < 5:
         return "unknown"
 
+    total    = stats["total_actions"]
+    agg      = stats["aggressive_actions"]
     vpip_pct = stats["vpip"] / hands
     pfr_pct  = stats["pfr"]  / hands
-    total    = stats["total_actions"]
-    agg      = stats["aggressive_actions"] / total if total > 0 else 0.0
+    agg_freq = agg / total if total > 0 else 0.0
 
     if vpip_pct < 0.15:
         return "nit"
-    if vpip_pct > 0.6 and agg > 0.5:
+    if vpip_pct > 0.6 and agg_freq > 0.5:
         return "maniac"
     if vpip_pct > 0.5 and pfr_pct < 0.1:
         return "calling_station"
     if vpip_pct > 0.4 and pfr_pct > 0.25:
         return "LAG"
     return "TAG"
+
+
+def _is_tentative_maniac(bot_id) -> bool:
+    """
+    Fast early detection for cfr_lookup only — does NOT affect heuristic logic.
+    Returns True if the opponent looks like a maniac before 5 hands are seen.
+    """
+    stats = OPPONENT_STATS.get(bot_id)
+    if not stats:
+        return False
+    total = stats["total_actions"]
+    agg   = stats["aggressive_actions"]
+    hands = stats["hands"]
+    # 3+ raises in first 3 voluntary actions seen → almost certainly a maniac
+    if total >= 3 and agg >= 3:
+        return True
+    # aggression_freq > 0.5 after at least 2 hands
+    if hands >= 2 and total > 0 and agg / total > 0.5:
+        return True
+    return False
 
 
 def get_opponent_types(state):
