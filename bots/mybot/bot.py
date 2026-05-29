@@ -34,24 +34,37 @@ _BLUEPRINT_PATH = os.path.join(
 
 # BLUEPRINT: (hand_tier, board_texture, street, pot_odds_bucket, position_bucket)
 #            → np.ndarray shape (5,) of action probabilities
+# BLUEPRINT_VISITS: same key → int visit count (used for confidence threshold)
 BLUEPRINT: dict | None = None
+BLUEPRINT_VISITS: dict = {}
+
+# Only trust an info set that was visited this many times during training
+_CFR_MIN_VISITS = 50
 
 def _load_blueprint():
-    global BLUEPRINT
+    global BLUEPRINT, BLUEPRINT_VISITS
     if not os.path.exists(_BLUEPRINT_PATH):
         BLUEPRINT = None
         return
     try:
         data = np.load(_BLUEPRINT_PATH, allow_pickle=False)
         bp = {}
+        visits = {}
         for k, v in data.items():
             if k.startswith("_metadata"):
                 continue
-            key = tuple(int(x) for x in k.strip("()").split(","))
-            bp[key] = v
+            if k.startswith("_visits_"):
+                raw = k[len("_visits_"):]
+                key = tuple(int(x) for x in raw.strip("()").split(","))
+                visits[key] = int(v[0])
+            else:
+                key = tuple(int(x) for x in k.strip("()").split(","))
+                bp[key] = v
         BLUEPRINT = bp
+        BLUEPRINT_VISITS = visits
     except Exception:
         BLUEPRINT = None
+        BLUEPRINT_VISITS = {}
 
 _load_blueprint()
 
@@ -155,6 +168,8 @@ def cfr_lookup(game_state) -> dict | None:
         key = (tier, board_tex, street_int, po_bkt, pos_bkt)
         if key not in BLUEPRINT:
             return None
+        if BLUEPRINT_VISITS.get(key, 0) < _CFR_MIN_VISITS:
+            return None  # not enough training data — fall back to heuristics
 
         strat = BLUEPRINT[key]
         # Determine legal abstract actions

@@ -442,6 +442,8 @@ class CFRTrainer:
         arrays: dict[str, np.ndarray] = {}
         for key in self.strategy_sum:
             arrays[str(key)] = self.get_average_strategy(key)
+            # Visit count = sum of strategy_sum (adds ~1.0 per traversal visit)
+            arrays["_visits_" + str(key)] = np.array([self.strategy_sum[key].sum()])
         arrays["_metadata_iterations"] = np.array([iters])
         arrays["_metadata_timestamp"]  = np.array([time.time()])
         np.savez_compressed(path, **arrays)
