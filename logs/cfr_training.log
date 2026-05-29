@@ -1,0 +1,38 @@
+CFR Blueprint Trainer — Koda
+Algorithm:   External Sampling CFR
+Iterations:  500,000
+Max info sets: 2,880  (8 tiers × 6 textures × 4 streets × 5 pot-odds × 3 positions)
+
+  iter  50,000 | info sets: 1,220 | 2,156 iter/s | elapsed: 23.2s
+  iter 100,000 | info sets: 1,229 | 2,111 iter/s | elapsed: 47.4s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_100000.npz]
+  iter 150,000 | info sets: 1,230 | 2,113 iter/s | elapsed: 71.0s
+  iter 200,000 | info sets: 1,237 | 2,115 iter/s | elapsed: 94.6s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_200000.npz]
+  iter 250,000 | info sets: 1,242 | 2,142 iter/s | elapsed: 116.7s
+  iter 300,000 | info sets: 1,242 | 2,158 iter/s | elapsed: 139.0s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_300000.npz]
+  iter 350,000 | info sets: 1,244 | 2,167 iter/s | elapsed: 161.5s
+  iter 400,000 | info sets: 1,246 | 2,169 iter/s | elapsed: 184.4s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_400000.npz]
+  iter 450,000 | info sets: 1,247 | 2,166 iter/s | elapsed: 207.7s
+  iter 500,000 | info sets: 1,247 | 2,164 iter/s | elapsed: 231.1s
+  [checkpoint: /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint_ckpt_500000.npz]
+
+Done. 500,000 iters in 231.1s (2,164 iter/s)
+
+Blueprint saved → /Users/mehedimostafa/Desktop/PROJECTS/New_Project/fullhouse-engine/scripts/../data/blueprint.npz
+  Size:       282.7 KB
+  Info sets:  1247
+  Iterations: 500,000
+  Timestamp:  2026-05-29 13:46:29.418484
+
+Sample average strategies  [fold | call | raise_sm | raise_lg | all_in]:
+  premium preflop late, small odds
+    key=(8, 0, 0, 1, 2)  → [0.2 0.2 0.2 0.2 0.2]
+  trash preflop early, big odds
+    key=(1, 0, 0, 3, 0)  → [0.    0.    0.333 0.333 0.333]
+  good hand dry-high flop, med odds, late
+    key=(6, 2, 1, 2, 2)  → [0.    0.796 0.    0.    0.203]
+  marginal wet-high river, huge odds, early
+    key=(3, 4, 3, 4, 0)  → [0.2 0.2 0.2 0.2 0.2]

@@ -4,9 +4,11 @@ Position-aware preflop ranges + Monte Carlo postflop equity engine.
 Phase 4 additions: 3bet logic, SPR awareness, steal logic, river bluffing.
 """
 
+import os
 import time
 import random
 
+import numpy as np
 import eval7
 
 BOT_NAME = "Koda"
@@ -21,6 +23,176 @@ _MC_BUDGET = 0.4
 # ---------------------------------------------------------------------------
 
 RANK_ORDER = "23456789TJQKA"
+
+# ---------------------------------------------------------------------------
+# CFR Blueprint — loaded once at import time
+# ---------------------------------------------------------------------------
+
+_BLUEPRINT_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "blueprint.npz"
+)
+
+# BLUEPRINT: (hand_tier, board_texture, street, pot_odds_bucket, position_bucket)
+#            → np.ndarray shape (5,) of action probabilities
+BLUEPRINT: dict | None = None
+
+def _load_blueprint():
+    global BLUEPRINT
+    if not os.path.exists(_BLUEPRINT_PATH):
+        BLUEPRINT = None
+        return
+    try:
+        data = np.load(_BLUEPRINT_PATH, allow_pickle=False)
+        bp = {}
+        for k, v in data.items():
+            if k.startswith("_metadata"):
+                continue
+            key = tuple(int(x) for x in k.strip("()").split(","))
+            bp[key] = v
+        BLUEPRINT = bp
+    except Exception:
+        BLUEPRINT = None
+
+_load_blueprint()
+
+# ---------------------------------------------------------------------------
+# CFR abstraction helpers (must match scripts/train_cfr.py exactly)
+# ---------------------------------------------------------------------------
+
+_CFR_TIER_LOOKUP: dict[str, int] = {}
+for _h in ("AA", "KK", "QQ", "AKs"):                                    _CFR_TIER_LOOKUP[_h] = 8
+for _h in ("JJ", "TT", "AQs", "AKo", "AJs"):                           _CFR_TIER_LOOKUP[_h] = 7
+for _h in ("99", "88", "ATs", "AQo", "KQs"):                           _CFR_TIER_LOOKUP[_h] = 6
+for _h in ("77", "66", "A9s", "A8s", "A7s", "KJs", "QJs", "AJo"):     _CFR_TIER_LOOKUP[_h] = 5
+for _h in ("55", "44", "33", "22",
+           "54s", "65s", "76s", "87s", "98s", "T9s", "JTs"):           _CFR_TIER_LOOKUP[_h] = 4
+for _h in ("A6s", "A5s", "A4s", "A3s", "A2s",
+           "K9s", "K8s", "K7s",
+           "KJo", "KQo", "QJo", "JTo"):                                 _CFR_TIER_LOOKUP[_h] = 3
+for _h in ("K6s", "K5s", "K4s", "K3s", "K2s",
+           "Q8s", "Q7s", "Q6s",
+           "J8s", "J7s", "J6s", "T8s"):                                 _CFR_TIER_LOOKUP[_h] = 2
+
+
+def _cfr_hand_tier(hand_str: str) -> int:
+    """Map canonical hand string (e.g. 'AKs') to tier 1-8."""
+    return _CFR_TIER_LOOKUP.get(hand_str, 1)
+
+
+def _cfr_board_texture(community_cards: list, street_int: int) -> int:
+    """
+    Map community card strings (e.g. ['Ah','Kd','2c']) to texture bucket 0-5.
+    Matches board_texture_from_cards() in train_cfr.py.
+    """
+    if street_int == 0 or not community_cards:
+        return 0
+    ranks = [c[0] for c in community_cards]
+    suits = [c[1] for c in community_cards]
+
+    if len(ranks) != len(set(ranks)):
+        return 5  # paired
+
+    rank_idxs = sorted(RANK_ORDER.index(r) for r in ranks)
+    suit_counts: dict[str, int] = {}
+    for s in suits:
+        suit_counts[s] = suit_counts.get(s, 0) + 1
+    flush_draw    = max(suit_counts.values()) >= 3
+    straight_draw = (rank_idxs[-1] - rank_idxs[0]) <= 4
+    wet           = flush_draw or straight_draw
+    high_board    = rank_idxs[-1] >= RANK_ORDER.index("T")
+
+    if wet and high_board: return 4
+    if wet:                return 3
+    if high_board:         return 2
+    return 1
+
+
+def _cfr_position_bucket(position_label: str) -> int:
+    """Map position label to bucket: 0=early, 1=middle, 2=late."""
+    if position_label in ("UTG",):            return 0
+    if position_label in ("MP", "HJ"):        return 1
+    return 2  # CO, BTN, SB, BB → late
+
+
+_STREET_INT = {"preflop": 0, "flop": 1, "turn": 2, "river": 3}
+
+
+def _cfr_pot_odds_bucket(amount_owed: float, pot: float) -> int:
+    if amount_owed <= 0:         return 0
+    ratio = amount_owed / (pot + amount_owed)
+    if ratio < 0.15:             return 1
+    if ratio < 0.33:             return 2
+    if ratio < 0.66:             return 3
+    return 4
+
+
+def cfr_lookup(game_state) -> dict | None:
+    """
+    Look up current situation in the CFR blueprint and return a real action dict.
+    Returns None if blueprint is unavailable or lookup fails.
+    """
+    if BLUEPRINT is None:
+        return None
+    try:
+        street_str  = game_state["street"]
+        street_int  = _STREET_INT.get(street_str, 0)
+        amount_owed = game_state["amount_owed"]
+        pot         = game_state["pot"]
+        can_check   = game_state["can_check"]
+        my_cards    = game_state["your_cards"]
+        my_stack    = game_state["your_stack"]
+        my_bet      = game_state["your_bet_this_street"]
+        min_raise   = game_state["min_raise_to"]
+        community   = game_state.get("community_cards", [])
+
+        hand_str    = cards_to_hand_str(my_cards[0], my_cards[1])
+        tier        = _cfr_hand_tier(hand_str)
+        board_tex   = _cfr_board_texture(community, street_int)
+        position    = get_position(game_state)
+        pos_bkt     = _cfr_position_bucket(position)
+        po_bkt      = _cfr_pot_odds_bucket(amount_owed, pot)
+
+        key = (tier, board_tex, street_int, po_bkt, pos_bkt)
+        if key not in BLUEPRINT:
+            return None
+
+        strat = BLUEPRINT[key]
+        # Determine legal abstract actions
+        max_chips = my_stack + my_bet
+        legal = [1]  # call/check always legal
+        if amount_owed > 0:
+            legal.append(0)  # fold
+        if my_stack > amount_owed:
+            legal += [2, 3, 4]  # raises
+
+        # Sample from strategy restricted to legal actions
+        weights = np.array([strat[a] for a in legal], dtype=np.float64)
+        total   = weights.sum()
+        if total <= 0:
+            return None
+        weights /= total
+        chosen = legal[min(int(np.searchsorted(np.cumsum(weights), random.random())),
+                          len(legal) - 1)]
+
+        # Convert abstract action → real action dict
+        if chosen == 0:
+            return {"action": "fold"}
+        if chosen == 1:
+            return {"action": "check"} if can_check else {"action": "call"}
+        if chosen == 4:
+            return {"action": "all_in"}
+
+        # Raise actions (2 = 33% pot, 3 = 75% pot)
+        frac   = 0.33 if chosen == 2 else 0.75
+        amount = int(amount_owed + frac * pot)
+        amount = max(amount, min_raise)
+        amount = min(amount, max_chips)
+        if amount >= max_chips:
+            return {"action": "all_in"}
+        return {"action": "raise", "amount": amount}
+
+    except Exception:
+        return None
 
 # ---------------------------------------------------------------------------
 # Preflop open-raise ranges (hardcoded lookup tables, zero computation)
@@ -493,6 +665,12 @@ def get_opponent_types(state):
 def _decide_core(game_state):
     """Inner logic — see decide() wrapper for timing enforcement."""
     try:
+        # ── CFR blueprint (GTO layer) ─────────────────────────────────────────
+        # Try the blueprint first; fall through to heuristics on any miss.
+        cfr_action = cfr_lookup(game_state)
+        if cfr_action is not None:
+            return cfr_action
+
         street      = game_state["street"]
         amount_owed = game_state["amount_owed"]
         pot         = game_state["pot"]
